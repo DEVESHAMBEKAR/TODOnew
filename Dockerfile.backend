@@ -1,0 +1,18 @@
+# Backend Dockerfile for Render
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy backend files
+COPY backend/package*.json ./
+RUN npm install --production
+
+COPY backend/ ./
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=10000
+
+EXPOSE 10000
+
+CMD ["npm", "start"]
