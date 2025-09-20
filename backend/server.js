@@ -12,13 +12,17 @@ console.log(`🚪 Port: ${PORT}`);
 console.log(`🔗 MongoDB URI: ${process.env.MONGO_URI ? 'Set' : 'Not set'}`);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false
+}));
 app.use(express.json());
 
 // 🔗 MongoDB connection URI
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
-app.use(cors({ origin: "*" }));
 
 
 let todosCollection;
