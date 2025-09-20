@@ -6,6 +6,10 @@ const { MongoClient, ObjectId } = require("mongodb");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+console.log(`🔧 Starting server setup...`);
+console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+console.log(`🚪 Port: ${PORT}`);
+console.log(`🔗 MongoDB URI: ${process.env.MONGO_URI ? 'Set' : 'Not set'}`);
 
 // Middleware
 app.use(cors());
@@ -30,8 +34,8 @@ async function connectDB() {
     todosCollection = db.collection("todos");
 
     // Start Express server after DB connection
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
     });
   } catch (err) {
     console.error("❌ MongoDB connection failed:", err);
@@ -42,6 +46,24 @@ async function connectDB() {
 connectDB();
 
 // ================= Routes =================
+
+// ✅ Health check endpoint
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "TODO Backend API is running!", 
+    status: "healthy",
+    timestamp: new Date().toISOString()
+  });
+});
+
+// ✅ Health check endpoint (alternative)
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "OK", 
+    service: "TODO Backend API",
+    timestamp: new Date().toISOString()
+  });
+});
 
 // ✅ Get all todos
 app.get("/todos", async (req, res) => {
