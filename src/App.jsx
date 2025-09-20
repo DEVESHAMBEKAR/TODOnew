@@ -61,15 +61,30 @@ function App() {
   // ✅ Delete todo
   const deleteTodo = async (id) => {
     try {
+      console.log(`Attempting to delete todo with ID: ${id}`);
+      console.log(`API URL: ${BASE_URL}/todos/${id}`);
+      
       const res = await fetch(`${BASE_URL}/todos/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
-      if (!res.ok) throw new Error("Failed to delete task");
+      console.log(`Delete response status: ${res.status}`);
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error(`Delete failed: ${res.status} - ${errorText}`);
+        throw new Error(`Failed to delete task: ${res.status} ${errorText}`);
+      }
 
       setTodos(todos.filter((t) => t._id !== id));
+      setError(null); // Clear any previous errors
+      console.log(`Successfully deleted todo ${id}`);
     } catch (err) {
-      setError(err.message);
+      console.error("Delete error:", err);
+      setError(`Delete failed: ${err.message}`);
     }
   };
 
@@ -102,18 +117,29 @@ function App() {
   // ✅ Update status (done/pending)
   const updateStatus = async (id, status) => {
     try {
+      console.log(`Updating todo ${id} to status: ${status}`);
+      
       const res = await fetch(`${BASE_URL}/todos/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
 
-      if (!res.ok) throw new Error("Failed to update status");
+      console.log(`Update status response: ${res.status}`);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error(`Status update failed: ${res.status} - ${errorText}`);
+        throw new Error(`Failed to update status: ${res.status} ${errorText}`);
+      }
 
       const updated = await res.json();
       setTodos(todos.map((t) => (t._id === id ? updated : t)));
+      setError(null); // Clear any previous errors
+      console.log(`Successfully updated todo ${id} status to ${status}`);
     } catch (err) {
-      setError(err.message);
+      console.error("Status update error:", err);
+      setError(`Status update failed: ${err.message}`);
     }
   };
 
