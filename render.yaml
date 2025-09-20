@@ -4,8 +4,9 @@ services:
     name: todo-backend
     runtime: node
     plan: free
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
     healthCheckPath: /
     envVars:
       - key: NODE_ENV
@@ -22,6 +23,7 @@ services:
     name: todo-frontend
     runtime: node
     plan: free
+    rootDir: .
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:
